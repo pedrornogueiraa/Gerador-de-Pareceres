@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criador de Pareceres — Lumens Atuarial</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --roxo:        #5c3d9e;
+    --roxo-escuro: #3b2370;
+    --roxo-suave:  #f0ebfa;
+    --roxo-borda:  #d8ccf0;
+    --roxo-hover:  #ede6f8;
+    --branco:      #ffffff;
+    --cinza-bg:    #f7f7f9;
+    --cinza-linha: #e8e8ed;
+    --cinza-texto: #888899;
+    --texto:       #1a1a2e;
+    --verde:       #27ae60;
+    --vermelho:    #e74c3c;
+    --radius:      6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--cinza-bg); color: var(--texto); min-height: 100vh; font-size: 13px; }
+
+  header {
+    background: var(--branco);
+    border-bottom: 1px solid var(--cinza-linha);
+    padding: 0 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo-img { height: 30px; width: auto; }
+  .logo-divider { width: 1px; height: 22px; background: var(--cinza-linha); }
+  .logo-sub { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cinza-texto); }
+
+  .status-wrap { display: flex; align-items: center; gap: 7px; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--cinza-linha); background: var(--cinza-bg); }
+  #status-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; transition: background 0.3s; flex-shrink: 0; }
+  #status-dot.ok  { background: var(--verde); }
+  #status-dot.err { background: var(--vermelho); }
+  #status-label { color: var(--cinza-texto); font-size: 11px; font-family: 'Montserrat', sans-serif; }
+
+  .layout { display: grid; grid-template-columns: 300px 1fr 290px; height: calc(100vh - 56px); overflow: hidden; }
+  .panel { border-right: 1px solid var(--cinza-linha); display: flex; flex-direction: column; overflow: hidden; background: var(--branco); }
+  .panel:last-child { border-right: none; }
+
+  .panel-header { padding: 14px 20px 12px; border-bottom: 1px solid var(--cinza-linha); background: var(--branco); flex-shrink: 0; }
+  .panel-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--roxo); margin-bottom: 2px; }
+  .panel-sub { color: var(--cinza-texto); font-size: 11px; }
+
+  .panel-body { flex: 1; overflow-y: auto; padding: 16px 18px; background: var(--cinza-bg); }
+  .panel-body::-webkit-scrollbar { width: 3px; }
+  .panel-body::-webkit-scrollbar-thumb { background: var(--roxo-borda); border-radius: 2px; }
+
+  .field { margin-bottom: 13px; }
+  label { display: block; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600; color: var(--cinza-texto); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+  input, select, textarea { width: 100%; background: var(--branco); border: 1px solid var(--cinza-linha); border-radius: var(--radius); color: var(--texto); font-family: 'Inter', sans-serif; font-size: 13px; padding: 8px 11px; transition: border-color 0.2s; outline: none; }
+  input::placeholder, textarea::placeholder { color: #bbb; }
+  input:focus, select:focus, textarea:focus { border-color: var(--roxo); }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .search-wrap { padding: 10px 18px; border-bottom: 1px solid var(--cinza-linha); flex-shrink: 0; background: var(--branco); }
+
+  .categoria-group { margin-bottom: 4px; }
+  .categoria-label { font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--cinza-texto); padding: 7px 4px 4px; cursor: pointer; display: flex; align-items: center; gap: 6px; user-select: none; transition: color 0.15s; }
+  .categoria-label:hover { color: var(--roxo); }
+  .categoria-label .arrow { font-size: 9px; transition: transform 0.2s; color: #ccc; }
+  .categoria-label.collapsed .arrow { transform: rotate(-90deg); }
+  .cat-count { margin-left: auto; background: var(--roxo-suave); color: var(--roxo); font-size: 9px; border-radius: 8px; padding: 1px 6px; font-weight: 700; }
+
+  .topicos-list { display: flex; flex-direction: column; gap: 1px; padding-bottom: 4px; }
+  .topicos-list.hidden { display: none; }
+  .topico-item { display: flex; align-items: center; gap: 9px; padding: 6px 8px; border-radius: 5px; cursor: pointer; transition: background 0.1s; border: 1px solid transparent; }
+  .topico-item:hover { background: var(--roxo-hover); }
+  .topico-item.selected { background: var(--roxo-suave); border-color: var(--roxo-borda); }
+  .topico-check { width: 15px; height: 15px; border-radius: 3px; border: 1.5px solid var(--cinza-linha); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.12s; font-size: 9px; }
+  .topico-item.selected .topico-check { background: var(--roxo); border-color: var(--roxo); color: white; }
+  .topico-nome { font-size: 12px; line-height: 1.35; color: var(--texto); }
+
+  .selected-list { display: flex; flex-direction: column; gap: 4px; }
+  .selected-item { background: var(--branco); border: 1px solid var(--cinza-linha); border-radius: 5px; padding: 8px 10px; display: flex; align-items: flex-start; gap: 7px; cursor: grab; transition: border-color 0.15s; }
+  .selected-item:hover { border-color: var(--roxo-borda); }
+  .selected-item.dragging { opacity: 0.35; }
+  .selected-item.drag-over { border-color: var(--roxo); box-shadow: 0 0 0 2px var(--roxo-suave); }
+  .drag-handle { color: #ccc; font-size: 11px; padding-top: 2px; cursor: grab; flex-shrink: 0; }
+  .selected-nome { font-size: 12px; flex: 1; line-height: 1.4; color: var(--texto); }
+  .selected-cat { font-size: 10px; color: var(--cinza-texto); margin-top: 1px; }
+  .remove-btn { background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px; padding: 0; flex-shrink: 0; line-height: 1; transition: color 0.15s; }
+  .remove-btn:hover { color: var(--vermelho); }
+
+  .empty-state { color: var(--cinza-texto); font-size: 12px; text-align: center; padding: 32px 12px; line-height: 1.7; }
+  .count-badge { background: var(--roxo); color: white; font-size: 10px; font-weight: 700; border-radius: 10px; padding: 1px 7px; margin-left: 5px; font-family: 'Montserrat', sans-serif; }
+
+  .gerar-wrap { padding: 14px 18px; border-top: 1px solid var(--cinza-linha); flex-shrink: 0; background: var(--branco); }
+  .btn-gerar { width: 100%; background: var(--roxo); color: white; border: none; border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; padding: 11px; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+  .btn-gerar:hover:not(:disabled) { background: var(--roxo-escuro); }
+  .btn-gerar:active:not(:disabled) { transform: scale(0.98); }
+  .btn-gerar:disabled { background: var(--cinza-linha); color: var(--cinza-texto); cursor: not-allowed; }
+
+  .categoria-inativos .categoria-label { opacity: 0.5; }
+
+  .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.75); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 14px; backdrop-filter: blur(3px); }
+  .loading-overlay.show { display: flex; }
+  .spinner { width: 30px; height: 30px; border: 2px solid var(--cinza-linha); border-top-color: var(--roxo); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 0.1em; color: var(--cinza-texto); text-transform: uppercase; }
+
+  #toast { position: fixed; bottom: 20px; right: 20px; background: var(--branco); border: 1px solid var(--cinza-linha); border-radius: var(--radius); padding: 11px 18px; font-size: 13px; color: var(--texto); z-index: 999; opacity: 0; transform: translateY(6px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; max-width: 300px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  #toast.show { opacity: 1; transform: translateY(0); }
+  #toast.success { border-color: var(--verde); }
+  #toast.error   { border-color: var(--vermelho); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <img class="logo-img" src="data:image/jpeg;base64,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" alt="Lumens Atuarial">
+    <div class="logo-divider"></div>
+    <div class="logo-sub">Criador de Pareceres — Núcleo Judicial</div>
+  </div>
+  <div class="status-wrap">
+    <div id="status-dot"></div>
+    <span id="status-label">Conectando...</span>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Dados do Caso</div>
+      <div class="panel-sub">Informações para o parecer</div>
+    </div>
+    <div class="panel-body">
+      <div class="field"><label>Número do Processo</label><input type="text" id="processo" placeholder="0000000-00.0000.0.00.0000"></div>
+      <div class="field"><label>Vara / Juízo</label><input type="text" id="vara" placeholder="Ex: 3ª Vara do Trabalho de Curitiba"></div>
+      <div class="field"><label>Autor / Reclamante</label><input type="text" id="participante" placeholder="Nome completo"></div>
+      <div class="field"><label>Demanda / Objeto</label><textarea id="demanda" placeholder="Descreva resumidamente a demanda..."></textarea></div>
+      <div class="field"><label>Data de Entrega</label><input type="text" id="entrega" placeholder="Ex: 01 de março de 2026"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Banco de Teses <span id="count-badge"></span></div>
+      <div class="panel-sub">Clique para adicionar ao parecer</div>
+    </div>
+    <div class="search-wrap"><input type="text" id="busca" placeholder="Buscar tópico..."></div>
+    <div class="panel-body" id="topicos-container"><div class="empty-state">Carregando tópicos...</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Parecer <span id="sel-count"></span></div>
+      <div class="panel-sub">Arraste para reordenar</div>
+    </div>
+    <div class="panel-body"><div id="selected-list" class="selected-list"><div class="empty-state">Nenhum tópico selecionado.<br>Clique nos tópicos ao lado.</div></div></div>
+    <div class="gerar-wrap"><button class="btn-gerar" id="btn-gerar" disabled>Gerar Parecer</button></div>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loading"><div class="spinner"></div><div class="loading-text">Gerando parecer...</div></div>
+<div id="toast"></div>
+
+<script>
+const API = 'http://localhost:5000';
+let todosTopicos = [], selecionados = [], dragSrc = null;
+
+async function checkStatus() {
+  try {
+    const r = await fetch(`${API}/api/status`);
+    const d = await r.json();
+    const dot = document.getElementById('status-dot');
+    const lbl = document.getElementById('status-label');
+    if (d.dropbox_configurado) {
+      dot.className = d.template_ok ? 'ok' : 'err';
+      lbl.textContent = d.template_ok ? 'Pronto' : 'Template não encontrado';
+    } else {
+      dot.className = 'err';
+      lbl.textContent = 'Dropbox não configurado';
+    }
+  } catch {
+    document.getElementById('status-dot').className = 'err';
+    document.getElementById('status-label').textContent = 'Backend offline';
+  }
+}
+
+async function carregarTopicos() {
+  try {
+    const r = await fetch(`${API}/api/topicos`);
+    const d = await r.json();
+    todosTopicos = d.topicos || [];
+    const ativos = todosTopicos.filter(t => !t.path.includes('Arquivos Inativos'));
+    document.getElementById('count-badge').innerHTML = `<span class="count-badge">${ativos.length}</span>`;
+    renderTopicos(todosTopicos);
+  } catch {
+    document.getElementById('topicos-container').innerHTML = '<div class="empty-state">Erro ao carregar tópicos.<br>Verifique se o servidor está rodando.</div>';
+  }
+}
+
+function renderTopicos(lista) {
+  const container = document.getElementById('topicos-container');
+  const filtro = document.getElementById('busca').value.toLowerCase();
+  const toRender = filtro ? lista : lista.filter(t => !t.path.includes('Arquivos Inativos'));
+  const grupos = {};
+  toRender.forEach(t => {
+    const cat = t.path.includes('Arquivos Inativos') ? '⚠ Arquivos Inativos' : t.categoria;
+    if (!grupos[cat]) grupos[cat] = [];
+    grupos[cat].push(t);
+  });
+  if (!Object.keys(grupos).length) { container.innerHTML = '<div class="empty-state">Nenhum tópico encontrado.</div>'; return; }
+  container.innerHTML = '';
+  Object.entries(grupos).sort((a,b) => { if(a[0].includes('Inativos')) return 1; if(b[0].includes('Inativos')) return -1; return a[0].localeCompare(b[0],'pt-BR'); }).forEach(([cat, items]) => {
+    const group = document.createElement('div');
+    group.className = 'categoria-group' + (cat.includes('Inativos') ? ' categoria-inativos' : '');
+    const label = document.createElement('div');
+    label.className = 'categoria-label' + (cat.includes('Inativos') && !filtro ? ' collapsed' : '');
+    label.innerHTML = `<span class="arrow">▾</span> ${cat} <span class="cat-count">${items.length}</span>`;
+    const list = document.createElement('div');
+    list.className = 'topicos-list' + (cat.includes('Inativos') && !filtro ? ' hidden' : '');
+    label.onclick = () => { label.classList.toggle('collapsed'); list.classList.toggle('hidden'); };
+    items.forEach(t => {
+      const isSel = !!selecionados.find(s => s.id === t.id);
+      const item = document.createElement('div');
+      item.className = 'topico-item' + (isSel ? ' selected' : '');
+      item.innerHTML = `<div class="topico-check">${isSel ? '✓' : ''}</div><div class="topico-nome">${t.nome}</div>`;
+      item.onclick = () => toggleTopico(t);
+      list.appendChild(item);
+    });
+    group.appendChild(label); group.appendChild(list); container.appendChild(group);
+  });
+}
+
+function toggleTopico(t) {
+  const idx = selecionados.findIndex(s => s.id === t.id);
+  if (idx >= 0) selecionados.splice(idx, 1); else selecionados.push(t);
+  const f = document.getElementById('busca').value.toLowerCase();
+  renderTopicos(f ? todosTopicos.filter(t => t.nome.toLowerCase().includes(f) || t.categoria.toLowerCase().includes(f)) : todosTopicos);
+  renderSelecionados();
+}
+
+function renderSelecionados() {
+  const list = document.getElementById('selected-list');
+  document.getElementById('btn-gerar').disabled = !selecionados.length;
+  document.getElementById('sel-count').innerHTML = selecionados.length ? `<span class="count-badge">${selecionados.length}</span>` : '';
+  if (!selecionados.length) { list.innerHTML = '<div class="empty-state">Nenhum tópico selecionado.<br>Clique nos tópicos ao lado.</div>'; return; }
+  list.innerHTML = '';
+  selecionados.forEach((t, i) => {
+    const item = document.createElement('div');
+    item.className = 'selected-item'; item.draggable = true;
+    item.innerHTML = `<div class="drag-handle">⠿</div><div style="flex:1"><div class="selected-nome">${t.nome}</div><div class="selected-cat">${t.categoria}</div></div><button class="remove-btn">×</button>`;
+    item.querySelector('.remove-btn').onclick = e => {
+      e.stopPropagation(); selecionados.splice(i, 1);
+      const f = document.getElementById('busca').value.toLowerCase();
+      renderTopicos(f ? todosTopicos.filter(t => t.nome.toLowerCase().includes(f) || t.categoria.toLowerCase().includes(f)) : todosTopicos);
+      renderSelecionados();
+    };
+    item.addEventListener('dragstart', e => { dragSrc = i; item.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    item.addEventListener('dragend', () => item.classList.remove('dragging'));
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => { e.preventDefault(); item.classList.remove('drag-over'); if (dragSrc !== null && dragSrc !== i) { selecionados.splice(i, 0, selecionados.splice(dragSrc, 1)[0]); renderSelecionados(); } });
+    list.appendChild(item);
+  });
+}
+
+document.getElementById('busca').addEventListener('input', e => {
+  const f = e.target.value.toLowerCase();
+  renderTopicos(f ? todosTopicos.filter(t => t.nome.toLowerCase().includes(f) || t.categoria.toLowerCase().includes(f)) : todosTopicos);
+});
+
+document.getElementById('btn-gerar').addEventListener('click', async () => {
+  const dados = { processo: document.getElementById('processo').value, vara: document.getElementById('vara').value, participante: document.getElementById('participante').value, demanda: document.getElementById('demanda').value, entrega: document.getElementById('entrega').value };
+  if (!dados.participante) { showToast('Informe o nome do Autor/Reclamante.', 'error'); return; }
+  document.getElementById('loading').classList.add('show');
+  try {
+    const r = await fetch(`${API}/api/gerar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topicos: selecionados.map(t => ({ nome: t.nome, path: t.path })), dados }) });
+    if (!r.ok) { const e = await r.json(); throw new Error(e.erro || 'Erro'); }
+    const blob = await r.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Parecer_${dados.participante.split(' ')[0]}_${dados.processo.replace(/[\/\.]/g,'-').substring(0,15)||'sp'}.docx`;
+    a.click();
+    showToast('Parecer gerado com sucesso!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+  finally { document.getElementById('loading').classList.remove('show'); }
+});
+
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = type ? `show ${type}` : 'show';
+  clearTimeout(t._t); t._t = setTimeout(() => t.className = '', 4000);
+}
+
+checkStatus(); carregarTopicos();
+</script>
+</body>
+</html>
