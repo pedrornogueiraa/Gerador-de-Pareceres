@@ -14,6 +14,7 @@ import copy
 import io
 import os
 
+
 def carregar_env():
     env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
     if os.path.exists(env_path):
@@ -24,11 +25,17 @@ def carregar_env():
                     chave, valor = linha.split('=', 1)
                     os.environ[chave.strip()] = valor.strip()
 
+
 carregar_env()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "lumens-secret-2024")
 CORS(app, supports_credentials=True)
+
+TEMPLATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'template.docx')
+
+
+# Autenticacao
 
 def login_required(f):
     @wraps(f)
@@ -38,12 +45,9 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
-# Caminho do template base (deve estar na mesma pasta que app.py)
-TEMPLATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'template.docx')
-
 
 @app.route("/api/login", methods=["POST"])
-def login():
+def rota_login():
     data = request.json
     senha = data.get("senha", "")
     senha_correta = os.environ.get("APP_SENHA", "lumens2024")
@@ -54,15 +58,17 @@ def login():
 
 
 @app.route("/api/logout", methods=["POST"])
-def logout():
+def rota_logout():
     session.clear()
     return jsonify({"ok": True})
 
 
 @app.route("/api/check", methods=["GET"])
-def check_auth():
+def rota_check():
     return jsonify({"autenticado": bool(session.get('autenticado'))})
 
+
+# Dropbox
 
 def get_dropbox_client():
     refresh_token = os.environ.get("DROPBOX_REFRESH_TOKEN", "").strip()
@@ -87,10 +93,27 @@ def get_pasta():
     return os.environ.get("DROPBOX_PASTA", "/Banco de Teses").strip()
 
 
+# Rotas
+
 @app.route("/")
 def index():
     pasta = os.path.dirname(os.path.abspath(__file__))
     return send_from_directory(pasta, 'criador-pareceres.html')
+
+
+@app.route("/api/status", methods=["GET"])
+def status():
+    refresh_token = os.environ.get("DROPBOX_REFRESH_TOKEN", "").strip()
+    app_key = os.environ.get("DROPBOX_APP_KEY", "").strip()
+    token = os.environ.get("DROPBOX_TOKEN", "").strip()
+    dropbox_ok = bool((refresh_token and app_key) or token)
+    template_ok = os.path.exists(TEMPLATE_PATH)
+    return jsonify({
+        "status": "ok",
+        "dropbox_configurado": dropbox_ok,
+        "pasta": get_pasta(),
+        "template_ok": template_ok
+    })
 
 
 @app.route("/api/explorar", methods=["GET"])
@@ -150,29 +173,21 @@ def gerar_parecer():
         return jsonify({"erro": "Nenhum topico selecionado."}), 400
 
     if not os.path.exists(TEMPLATE_PATH):
-        return jsonify({"erro": "Arquivo template.docx nao encontrado na pasta do servidor."}), 500
+        return jsonify({"erro": "Arquivo template.docx nao encontrado."}), 500
 
     try:
         dbx = get_dropbox_client()
 
-        # 1. Carrega o template como base
         doc = Document(TEMPLATE_PATH)
-
-        # 2. Substitui dados da capa
         _substituir_dados_doc(doc, dados_caso)
 
-        # 3. Encontra o placeholder [inserir primeira impugnação] e o ponto de inserção dos demais
         placeholder_elem = _encontrar_placeholder_primeira_impugnacao(doc)
         ponto_insercao = _encontrar_ponto_insercao(doc)
-
-        # 4. Baixa e insere cada tópico na posição correta
-        body = doc.element.body
 
         for i, topico in enumerate(topicos_selecionados):
             docx_topico = _baixar_docx(dbx, topico["path"])
 
             if i == 0 and placeholder_elem is not None:
-                # Primeira impugnação: substitui o parágrafo placeholder
                 ref_element = placeholder_elem
                 for elem in docx_topico.element.body:
                     if elem.tag == qn("w:sectPr"):
@@ -180,10 +195,8 @@ def gerar_parecer():
                     novo = copy.deepcopy(elem)
                     _substituir_dados_xml(novo, dados_caso)
                     ref_element.addprevious(novo)
-                # Remove o parágrafo placeholder
                 ref_element.getparent().remove(ref_element)
             else:
-                # Demais impugnações: insere antes do segundo cTTULONVEL1
                 ref_element = ponto_insercao
                 sep = _criar_paragrafo_vazio()
                 ref_element.addprevious(sep)
@@ -194,13 +207,12 @@ def gerar_parecer():
                     _substituir_dados_xml(novo, dados_caso)
                     ref_element.addprevious(novo)
 
-        # 5. Salva e retorna
         buffer = io.BytesIO()
         doc.save(buffer)
         buffer.seek(0)
 
         processo = dados_caso.get("processo", "sp").strip().replace("/", "-").replace(".", "-").replace(" ", "_")
-        nome_arquivo = f"{processo}_Parecer Técnico.rev001.docx"
+        nome_arquivo = f"{processo}_Parecer Tecnico.rev001.docx"
 
         return send_file(
             buffer,
@@ -216,8 +228,9 @@ def gerar_parecer():
         return jsonify({"erro": f"Erro ao gerar parecer: {str(e)}", "detalhe": traceback.format_exc()}), 500
 
 
+# Auxiliares
+
 def _encontrar_placeholder_primeira_impugnacao(doc):
-    """Encontra o parágrafo com [inserir primeira impugnação] no template."""
     for elem in doc.element.body:
         if elem.tag == qn("w:p"):
             texto = "".join(t.text or "" for t in elem.iter(qn("w:t")))
@@ -227,39 +240,25 @@ def _encontrar_placeholder_primeira_impugnacao(doc):
 
 
 def _encontrar_ponto_insercao(doc):
-    """
-    Encontra o elemento antes do qual os tópicos devem ser inseridos.
-    Lógica: após o primeiro cTTULONVEL1, procura o segundo cTTULONVEL1
-    (que normalmente é 'Do cálculo da PREVI' ou similar).
-    Insere ANTES do segundo cTTULONVEL1.
-    Se não encontrar, insere antes do sectPr final.
-    """
     body = doc.element.body
     nivel1_encontrados = 0
-
     for elem in body:
-        # Verifica se é parágrafo com estilo cTTULONVEL1
         if elem.tag == qn("w:p"):
             pPr = elem.find(qn("w:pPr"))
             if pPr is not None:
                 pStyle = pPr.find(qn("w:pStyle"))
                 if pStyle is not None:
-                    style_val = pStyle.get(qn("w:val"), "")
-                    if style_val == "cTTULONVEL1":
+                    if pStyle.get(qn("w:val"), "") == "cTTULONVEL1":
                         nivel1_encontrados += 1
                         if nivel1_encontrados == 2:
-                            return elem  # insere ANTES deste
-
-    # Fallback: insere antes do sectPr
+                            return elem
     sect_pr = body.find(qn("w:sectPr"))
     if sect_pr is not None:
         return sect_pr
-
     return None
 
 
 def _criar_paragrafo_vazio():
-    """Cria parágrafo vazio com estilo fTextodocorpo."""
     p = OxmlElement("w:p")
     pPr = OxmlElement("w:pPr")
     pStyle = OxmlElement("w:pStyle")
@@ -275,24 +274,18 @@ def _baixar_docx(dbx, path):
 
 
 def _substituir_dados_doc(doc, dados_caso):
-    """Substitui placeholders em todos os parágrafos do documento."""
     for p in doc.paragraphs:
-        # Trata parágrafos onde o placeholder está fragmentado entre runs
         _consolidar_e_substituir(p, dados_caso)
 
 
 def _consolidar_e_substituir(p, dados_caso):
-    """Consolida texto do parágrafo, substitui placeholders e redistribui."""
     texto_completo = p.text
     mapeamento = _build_mapeamento(dados_caso)
-    precisa_substituir = any(ph in texto_completo for ph in mapeamento)
-    if not precisa_substituir:
+    if not any(ph in texto_completo for ph in mapeamento):
         return
-    # Substitui no texto completo
     novo_texto = texto_completo
     for ph, val in mapeamento.items():
         novo_texto = novo_texto.replace(ph, val)
-    # Coloca tudo no primeiro run e limpa os demais
     runs = p.runs
     if not runs:
         return
@@ -302,20 +295,12 @@ def _consolidar_e_substituir(p, dados_caso):
 
 
 def _substituir_dados_xml(elemento, dados_caso):
-    """Substitui placeholders nos nós w:t de um elemento XML."""
     mapeamento = _build_mapeamento(dados_caso)
     for no_texto in elemento.iter(qn("w:t")):
         if no_texto.text:
             for ph, val in mapeamento.items():
-                if ph in no_texto.text and val:
+                if ph in no_texto.text:
                     no_texto.text = no_texto.text.replace(ph, val)
-
-
-def _substituir_texto_run(run, dados_caso):
-    mapeamento = _build_mapeamento(dados_caso)
-    for ph, val in mapeamento.items():
-        if ph in run.text and val:
-            run.text = run.text.replace(ph, val)
 
 
 def _build_mapeamento(dados_caso):
@@ -327,38 +312,6 @@ def _build_mapeamento(dados_caso):
         "[data de entrega]":   dados_caso.get("entrega", ""),
     }
     return {k: v for k, v in mapa.items() if v}
-
-
-@app.route("/api/login", methods=["POST"])
-def login():
-    data = request.json
-    senha = data.get("senha", "")
-    senha_correta = os.environ.get("APP_SENHA", "lumens2024")
-    if senha == senha_correta:
-        session["autenticado"] = True
-        return jsonify({"ok": True})
-    return jsonify({"erro": "Senha incorreta."}), 401
-
-
-@app.route("/api/logout", methods=["POST"])
-def logout():
-    session.clear()
-    return jsonify({"ok": True})
-
-
-@app.route("/api/status", methods=["GET"])
-def status():
-    refresh_token = os.environ.get("DROPBOX_REFRESH_TOKEN", "").strip()
-    app_key = os.environ.get("DROPBOX_APP_KEY", "").strip()
-    token = os.environ.get("DROPBOX_TOKEN", "").strip()
-    dropbox_ok = bool((refresh_token and app_key) or token)
-    template_ok = os.path.exists(TEMPLATE_PATH)
-    return jsonify({
-        "status": "ok",
-        "dropbox_configurado": dropbox_ok,
-        "pasta": get_pasta(),
-        "template_ok": template_ok
-    })
 
 
 if __name__ == "__main__":
