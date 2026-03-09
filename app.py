@@ -33,10 +33,22 @@ TEMPLATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templa
 
 
 def get_dropbox_client():
+    refresh_token = os.environ.get("DROPBOX_REFRESH_TOKEN", "").strip()
+    app_key = os.environ.get("DROPBOX_APP_KEY", "").strip()
+    app_secret = os.environ.get("DROPBOX_APP_SECRET", "").strip()
+
+    if refresh_token and app_key and app_secret:
+        return dropbox.Dropbox(
+            oauth2_refresh_token=refresh_token,
+            app_key=app_key,
+            app_secret=app_secret
+        )
+
     token = os.environ.get("DROPBOX_TOKEN", "").strip()
-    if not token:
-        raise ValueError("DROPBOX_TOKEN nao configurado.")
-    return dropbox.Dropbox(token)
+    if token:
+        return dropbox.Dropbox(token)
+
+    raise ValueError("Credenciais do Dropbox nao configuradas.")
 
 
 def get_pasta():
