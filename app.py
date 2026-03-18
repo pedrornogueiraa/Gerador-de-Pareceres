@@ -1,5 +1,5 @@
 """
-Criador de Pareceres Atuariais — Backend
+Gerador de Pareceres Atuariais — Backend
 Lumens Atuarial | Núcleo Judicial
 """
 
@@ -248,8 +248,11 @@ def gerar_parecer():
         doc_final.save(buffer)
         buffer.seek(0)
 
-        processo    = dados_caso.get("processo", "sp").replace("/", "-").replace(".", "-")[:20]
-        nome_arquivo = f"{processo}_Parecer Tecnico.rev001.docx"
+        processo     = dados_caso.get("processo", "sp").strip()
+        # Limpar caracteres inválidos para nome de arquivo, preservando o número do processo
+        import re as _re
+        processo_limpo = _re.sub(r'[\\/*?:"<>|]', '-', processo)
+        nome_arquivo = f"{processo_limpo}_Parecer Técnico.rev001.docx"
 
         return send_file(
             buffer,
