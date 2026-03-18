@@ -141,28 +141,43 @@ def listar_topicos():
     try:
         dbx   = get_dropbox_client()
         pasta = get_pasta()
+
+        # Buscar com paginação completa (evita perder itens quando has_more=True)
         resultado = dbx.files_list_folder(pasta, recursive=True)
+        todas_entradas = list(resultado.entries)
+        while resultado.has_more:
+            resultado = dbx.files_list_folder_continue(resultado.cursor)
+            todas_entradas.extend(resultado.entries)
+
         topicos = []
         idx = 1
-        for entry in resultado.entries:
+        pasta_lower = pasta.lower().rstrip("/")
+
+        for entry in todas_entradas:
             if isinstance(entry, dropbox.files.FileMetadata):
                 if entry.name.lower().endswith(".docx"):
-                    # Caminho relativo à pasta raiz
-                    rel = entry.path_lower.replace(pasta.lower() + "/", "")
-                    partes = rel.split("/")
-                    # Categoria = nome da subpasta imediata (capitalizado para exibição)
-                    if len(partes) > 1:
-                        categoria_display = partes[0].capitalize()
-                        # Preserva case original para exibição bonita
-                        categoria_lower   = partes[0].lower()
+                    # Caminho relativo usando path_display (preserva acentos e maiúsculas)
+                    pd = entry.path_display
+                    prefixo = pasta.rstrip("/") + "/"
+                    if pd.lower().startswith(prefixo.lower()):
+                        rel_display = pd[len(prefixo):]
+                    else:
+                        rel_display = pd
+                    partes_display = rel_display.split("/")
+
+                    if len(partes_display) > 1:
+                        categoria_display = partes_display[0]
+                        categoria_lower   = partes_display[0].lower()
                     else:
                         categoria_display = "Geral"
                         categoria_lower   = "geral"
 
-                    nome = entry.name.replace(".docx", "").replace(".DOCX", "")
+                    nome = entry.name
+                    for ext in (".docx", ".DOCX", ".Docx"):
+                        nome = nome.replace(ext, "")
 
                     # Flags especiais
-                    eh_topico_principal   = (
+                    eh_topico_principal = (
                         categoria_lower == "base" and
                         nome.lower() == "cálculo lumens"
                     )
