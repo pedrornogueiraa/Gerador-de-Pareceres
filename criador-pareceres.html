@@ -10,7 +10,8 @@
   --roxo: #5c3d9e; --roxo-escuro: #3b2370; --roxo-suave: #f0ebfa;
   --roxo-borda: #d8ccf0; --roxo-hover: #ede6f8; --branco: #ffffff;
   --cinza-bg: #f7f7f9; --cinza-linha: #e8e8ed; --cinza-texto: #888899;
-  --texto: #1a1a2e; --verde: #27ae60; --vermelho: #e74c3c; --radius: 6px;
+  --texto: #1a1a2e; --verde: #27ae60; --vermelho: #e74c3c;
+  --laranja: #e67e22; --radius: 6px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Inter', sans-serif; background: var(--cinza-bg); color: var(--texto); min-height: 100vh; font-size: 13px; }
@@ -76,16 +77,24 @@ textarea { resize: vertical; min-height: 70px; }
 .topico-item.sel { background: var(--roxo-suave); border-color: var(--roxo-borda); }
 .topico-check { width: 15px; height: 15px; border-radius: 3px; border: 1.5px solid var(--cinza-linha); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; }
 .topico-item.sel .topico-check { background: var(--roxo); border-color: var(--roxo); color: white; }
-.topico-nome { font-size: 12px; line-height: 1.35; }
+.topico-nome { font-size: 12px; line-height: 1.35; flex: 1; }
+
+/* Badges de tipo */
+.badge-tipo { font-size: 9px; font-weight: 700; font-family: 'Montserrat', sans-serif; padding: 1px 5px; border-radius: 4px; flex-shrink: 0; }
+.badge-topico { background: #eaf3ff; color: #1a6dc9; }
+.badge-ultima { background: #fff3e0; color: #c46c00; }
 
 .sel-list { display: flex; flex-direction: column; gap: 4px; }
 .sel-item { background: var(--branco); border: 1px solid var(--cinza-linha); border-radius: 5px; padding: 8px 10px; display: flex; align-items: flex-start; gap: 7px; cursor: grab; }
 .sel-item:hover { border-color: var(--roxo-borda); }
 .sel-item.dragging { opacity: 0.35; }
 .sel-item.drag-over { border-color: var(--roxo); box-shadow: 0 0 0 2px var(--roxo-suave); }
+.sel-item.ultima-pagina { border-left: 3px solid var(--laranja); cursor: default; }
 .drag-handle { color: #ccc; font-size: 11px; padding-top: 2px; flex-shrink: 0; }
+.sel-item.ultima-pagina .drag-handle { color: #eee; cursor: not-allowed; }
 .sel-nome { font-size: 12px; flex: 1; line-height: 1.4; }
 .sel-cat { font-size: 10px; color: var(--cinza-texto); margin-top: 1px; }
+.sel-tipo-tag { font-size: 9px; color: var(--laranja); font-weight: 700; margin-top: 1px; }
 .rm-btn { background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px; padding: 0; flex-shrink: 0; line-height: 1; }
 .rm-btn:hover { color: var(--vermelho); }
 
@@ -107,6 +116,8 @@ textarea { resize: vertical; min-height: 70px; }
 #toast.show { opacity: 1; transform: translateY(0); }
 #toast.success { border-color: var(--verde); }
 #toast.error { border-color: var(--vermelho); }
+
+.sep-ultima { font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--laranja); padding: 8px 4px 4px; border-top: 1px dashed #ffe0b2; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -141,6 +152,7 @@ textarea { resize: vertical; min-height: 70px; }
   </header>
 
   <div class="layout">
+    <!-- COLUNA 1: DADOS -->
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">Dados do Caso</div>
@@ -155,6 +167,7 @@ textarea { resize: vertical; min-height: 70px; }
       </div>
     </div>
 
+    <!-- COLUNA 2: BANCO DE TESES -->
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">Banco de Teses <span id="badge-total"></span></div>
@@ -164,6 +177,7 @@ textarea { resize: vertical; min-height: 70px; }
       <div class="panel-body" id="topicos-container"><div class="empty-msg">Carregando tópicos...</div></div>
     </div>
 
+    <!-- COLUNA 3: PARECER -->
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">Parecer <span id="badge-sel"></span></div>
@@ -191,22 +205,21 @@ document.getElementById('campo-senha').addEventListener('keydown', function(e) {
 
 async function fazerLogin() {
   const senha = document.getElementById('campo-senha').value.trim();
-  const erro = document.getElementById('login-erro');
-  const btn = document.getElementById('btn-entrar');
+  const erro  = document.getElementById('login-erro');
+  const btn   = document.getElementById('btn-entrar');
   erro.style.display = 'none';
   if (!senha) return;
-  btn.disabled = true;
-  btn.textContent = 'Entrando...';
+  btn.disabled = true; btn.textContent = 'Entrando...';
   try {
     const resp = await fetch(API + '/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ senha: senha })
+      body: JSON.stringify({ senha })
     });
-    if (resp.ok) {
-      entrarNoApp();
-    } else {
+    if (resp.ok) { entrarNoApp(); }
+    else {
+      erro.textContent = 'Senha incorreta. Tente novamente.';
       erro.style.display = 'block';
       document.getElementById('campo-senha').value = '';
     }
@@ -214,19 +227,15 @@ async function fazerLogin() {
     erro.textContent = 'Erro de conexão. Tente novamente.';
     erro.style.display = 'block';
   }
-  btn.disabled = false;
-  btn.textContent = 'Entrar';
+  btn.disabled = false; btn.textContent = 'Entrar';
 }
 
 async function verificarSessao() {
   try {
     const resp = await fetch(API + '/api/check', { credentials: 'include' });
     const d = await resp.json();
-    if (d.autenticado) {
-      entrarNoApp();
-    } else {
-      document.getElementById('login-screen').classList.add('ativo');
-    }
+    if (d.autenticado) { entrarNoApp(); }
+    else { document.getElementById('login-screen').classList.add('ativo'); }
   } catch {
     document.getElementById('login-screen').classList.add('ativo');
   }
@@ -248,7 +257,9 @@ async function checkStatus() {
     const dot = document.getElementById('status-dot');
     const lbl = document.getElementById('status-label');
     dot.className = (d.dropbox_configurado && d.template_ok) ? 'ok' : 'err';
-    lbl.textContent = !d.dropbox_configurado ? 'Dropbox não configurado' : !d.template_ok ? 'Template não encontrado' : 'Pronto';
+    lbl.textContent = !d.dropbox_configurado ? 'Dropbox não configurado'
+                    : !d.template_ok         ? 'Template não encontrado'
+                    : 'Pronto';
   } catch {
     document.getElementById('status-dot').className = 'err';
     document.getElementById('status-label').textContent = 'Backend offline';
@@ -262,7 +273,7 @@ async function carregarTopicos() {
     const r = await fetch(API + '/api/topicos', { credentials: 'include' });
     const d = await r.json();
     todosTopicos = d.topicos || [];
-    const ativos = todosTopicos.filter(t => !t.path.includes('Arquivos Inativos'));
+    const ativos = todosTopicos.filter(t => !t.path.toLowerCase().includes('arquivos inativos'));
     document.getElementById('badge-total').innerHTML = '<span class="badge">' + ativos.length + '</span>';
     renderTopicos(todosTopicos);
   } catch {
@@ -270,54 +281,99 @@ async function carregarTopicos() {
   }
 }
 
+// Ordem de prioridade de pastas (lowercase)
+const PASTAS_PRIORIDADE = ['base', 'quesitos'];
+
+function sortKeyCategoria(catLower) {
+  const idx = PASTAS_PRIORIDADE.indexOf(catLower);
+  return idx >= 0 ? idx : PASTAS_PRIORIDADE.length + 1;
+}
+
 function renderTopicos(lista) {
   const container = document.getElementById('topicos-container');
-  const filtro = document.getElementById('busca').value.toLowerCase();
-  const toRender = filtro ? lista : lista.filter(t => !t.path.includes('Arquivos Inativos'));
+  const filtro    = document.getElementById('busca').value.toLowerCase();
+  const toRender  = filtro
+    ? lista.filter(t => t.nome.toLowerCase().includes(filtro) || t.categoria.toLowerCase().includes(filtro))
+    : lista.filter(t => !t.path.toLowerCase().includes('arquivos inativos'));
+
+  // Agrupar por categoria
   const grupos = {};
   toRender.forEach(t => {
-    const cat = t.path.includes('Arquivos Inativos') ? '⚠ Arquivos Inativos' : t.categoria;
+    const cat = t.path.toLowerCase().includes('arquivos inativos') ? '__inativos' : t.categoria;
     if (!grupos[cat]) grupos[cat] = [];
     grupos[cat].push(t);
   });
-  if (!Object.keys(grupos).length) { container.innerHTML = '<div class="empty-msg">Nenhum tópico encontrado.</div>'; return; }
+
+  if (!Object.keys(grupos).length) {
+    container.innerHTML = '<div class="empty-msg">Nenhum tópico encontrado.</div>';
+    return;
+  }
+
   container.innerHTML = '';
-  Object.entries(grupos).sort((a,b) => {
-    if (a[0].includes('Inativos')) return 1;
-    if (b[0].includes('Inativos')) return -1;
-    return a[0].localeCompare(b[0], 'pt-BR');
-  }).forEach(([cat, items]) => {
-    const g = document.createElement('div'); g.className = 'categoria-group';
+
+  // Ordenar categorias: prioridade fixa + alfabética
+  const cats = Object.keys(grupos).sort((a, b) => {
+    if (a === '__inativos') return 1;
+    if (b === '__inativos') return -1;
+    const ka = sortKeyCategoria(a.toLowerCase());
+    const kb = sortKeyCategoria(b.toLowerCase());
+    if (ka !== kb) return ka - kb;
+    return a.localeCompare(b, 'pt-BR');
+  });
+
+  cats.forEach(cat => {
+    const items    = grupos[cat];
+    const inativos = cat === '__inativos';
+    const label    = inativos ? '⚠ Arquivos Inativos' : cat;
+
+    const g   = document.createElement('div'); g.className = 'categoria-group';
     const lbl = document.createElement('div');
-    const inativos = cat.includes('Inativos');
     lbl.className = 'categoria-label' + (inativos && !filtro ? ' collapsed' : '');
-    lbl.innerHTML = '<span class="cat-arrow">▾</span> ' + cat + ' <span class="cat-count">' + items.length + '</span>';
+    lbl.innerHTML = '<span class="cat-arrow">▾</span> ' + label + ' <span class="cat-count">' + items.length + '</span>';
+
     const lst = document.createElement('div');
     lst.className = 'topicos-list' + (inativos && !filtro ? ' hidden' : '');
     lbl.onclick = () => { lbl.classList.toggle('collapsed'); lst.classList.toggle('hidden'); };
+
     items.forEach(t => {
-      const s = !!selecionados.find(x => x.id === t.id);
+      const sel  = !!selecionados.find(x => x.id === t.id);
       const item = document.createElement('div');
-      item.className = 'topico-item' + (s ? ' sel' : '');
-      item.innerHTML = '<div class="topico-check">' + (s ? '✓' : '') + '</div><div class="topico-nome">' + t.nome + '</div>';
+      item.className = 'topico-item' + (sel ? ' sel' : '');
+
+      // Badge visual de tipo
+      let badgeHtml = '';
+      if (t.topico_principal) badgeHtml = '<span class="badge-tipo badge-topico">TÓPICO</span>';
+      if (t.ultima_pagina)    badgeHtml = '<span class="badge-tipo badge-ultima">ÚLTIMA PÁG.</span>';
+
+      item.innerHTML =
+        '<div class="topico-check">' + (sel ? '✓' : '') + '</div>' +
+        '<div class="topico-nome">' + t.nome + '</div>' +
+        badgeHtml;
+
       item.onclick = () => toggleTopico(t);
       lst.appendChild(item);
     });
+
     g.appendChild(lbl); g.appendChild(lst); container.appendChild(g);
   });
 }
 
 function toggleTopico(t) {
   const idx = selecionados.findIndex(x => x.id === t.id);
-  if (idx >= 0) selecionados.splice(idx, 1); else selecionados.push(t);
-  const f = document.getElementById('busca').value.toLowerCase();
-  renderTopicos(f ? todosTopicos.filter(t => t.nome.toLowerCase().includes(f) || t.categoria.toLowerCase().includes(f)) : todosTopicos);
+  if (idx >= 0) selecionados.splice(idx, 1);
+  else selecionados.push(t);
+  const filtro = document.getElementById('busca').value.toLowerCase();
+  renderTopicos(filtro
+    ? todosTopicos.filter(t => t.nome.toLowerCase().includes(filtro) || t.categoria.toLowerCase().includes(filtro))
+    : todosTopicos);
   renderSelecionados();
 }
 
 document.getElementById('busca').addEventListener('input', function() {
   const f = this.value.toLowerCase();
-  renderTopicos(f ? todosTopicos.filter(t => t.nome.toLowerCase().includes(f) || t.categoria.toLowerCase().includes(f)) : todosTopicos);
+  renderTopicos(f
+    ? todosTopicos.filter(t => t.nome.toLowerCase().includes(f) || t.categoria.toLowerCase().includes(f))
+    : todosTopicos);
 });
 
 // ── SELECIONADOS ─────────────────────────────────────────────────────────────
@@ -325,40 +381,99 @@ document.getElementById('busca').addEventListener('input', function() {
 function renderSelecionados() {
   const list = document.getElementById('sel-list');
   document.getElementById('btn-gerar').disabled = !selecionados.length;
-  document.getElementById('badge-sel').innerHTML = selecionados.length ? '<span class="badge">' + selecionados.length + '</span>' : '';
-  if (!selecionados.length) { list.innerHTML = '<div class="empty-msg">Nenhum tópico selecionado.<br>Clique nos tópicos ao lado.</div>'; return; }
+  document.getElementById('badge-sel').innerHTML = selecionados.length
+    ? '<span class="badge">' + selecionados.length + '</span>' : '';
+
+  if (!selecionados.length) {
+    list.innerHTML = '<div class="empty-msg">Nenhum tópico selecionado.<br>Clique nos tópicos ao lado.</div>';
+    return;
+  }
+
   list.innerHTML = '';
-  selecionados.forEach((t, i) => {
+
+  // Separar normais e última página
+  const normais    = selecionados.filter(t => !t.ultima_pagina);
+  const ultimaPag  = selecionados.filter(t => t.ultima_pagina);
+
+  function criarItem(t, i, isDraggable) {
     const item = document.createElement('div');
-    item.className = 'sel-item'; item.draggable = true;
-    item.innerHTML = '<div class="drag-handle">⠿</div><div style="flex:1"><div class="sel-nome">' + t.nome + '</div><div class="sel-cat">' + t.categoria + '</div></div><button class="rm-btn">×</button>';
+    item.className = 'sel-item' + (t.ultima_pagina ? ' ultima-pagina' : '');
+    item.draggable = isDraggable;
+
+    let tagHtml = '';
+    if (t.topico_principal) tagHtml = '<div class="sel-tipo-tag">↑ Tópico principal</div>';
+    if (t.ultima_pagina)    tagHtml = '<div class="sel-tipo-tag" style="color:var(--laranja)">↓ Última página</div>';
+
+    item.innerHTML =
+      '<div class="drag-handle">' + (isDraggable ? '⠿' : '—') + '</div>' +
+      '<div style="flex:1">' +
+        '<div class="sel-nome">' + t.nome + '</div>' +
+        '<div class="sel-cat">' + t.categoria + '</div>' +
+        tagHtml +
+      '</div>' +
+      '<button class="rm-btn">×</button>';
+
+    // Remover
     item.querySelector('.rm-btn').onclick = function(e) {
-      e.stopPropagation(); selecionados.splice(i, 1);
-      const f = document.getElementById('busca').value.toLowerCase();
-      renderTopicos(f ? todosTopicos.filter(t => t.nome.toLowerCase().includes(f) || t.categoria.toLowerCase().includes(f)) : todosTopicos);
+      e.stopPropagation();
+      const gi = selecionados.findIndex(x => x.id === t.id);
+      if (gi >= 0) selecionados.splice(gi, 1);
+      const filtro = document.getElementById('busca').value.toLowerCase();
+      renderTopicos(filtro
+        ? todosTopicos.filter(x => x.nome.toLowerCase().includes(filtro) || x.categoria.toLowerCase().includes(filtro))
+        : todosTopicos);
       renderSelecionados();
     };
-    item.addEventListener('dragstart', function(e) { dragSrc = i; item.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
-    item.addEventListener('dragend', function() { item.classList.remove('dragging'); });
-    item.addEventListener('dragover', function(e) { e.preventDefault(); item.classList.add('drag-over'); });
-    item.addEventListener('dragleave', function() { item.classList.remove('drag-over'); });
-    item.addEventListener('drop', function(e) {
-      e.preventDefault(); item.classList.remove('drag-over');
-      if (dragSrc !== null && dragSrc !== i) { selecionados.splice(i, 0, selecionados.splice(dragSrc, 1)[0]); renderSelecionados(); }
-    });
-    list.appendChild(item);
-  });
+
+    // Drag-and-drop apenas para normais
+    if (isDraggable) {
+      item.addEventListener('dragstart', function(e) {
+        dragSrc = selecionados.indexOf(t);
+        item.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      item.addEventListener('dragend', function() { item.classList.remove('dragging'); });
+      item.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        // Só aceita drop de outros normais
+        if (dragSrc !== null && !selecionados[dragSrc].ultima_pagina) {
+          item.classList.add('drag-over');
+        }
+      });
+      item.addEventListener('dragleave', function() { item.classList.remove('drag-over'); });
+      item.addEventListener('drop', function(e) {
+        e.preventDefault(); item.classList.remove('drag-over');
+        const destIdx = selecionados.indexOf(t);
+        if (dragSrc !== null && dragSrc !== destIdx && !selecionados[dragSrc].ultima_pagina) {
+          selecionados.splice(destIdx, 0, selecionados.splice(dragSrc, 1)[0]);
+          renderSelecionados();
+        }
+      });
+    }
+    return item;
+  }
+
+  normais.forEach(t => list.appendChild(criarItem(t, selecionados.indexOf(t), true)));
+
+  // Separador visual para última página
+  if (ultimaPag.length) {
+    const sep = document.createElement('div');
+    sep.className = 'sep-ultima';
+    sep.textContent = '↓ Última página (fixo)';
+    list.appendChild(sep);
+    ultimaPag.forEach(t => list.appendChild(criarItem(t, selecionados.indexOf(t), false)));
+  }
 }
 
 // ── GERAR ────────────────────────────────────────────────────────────────────
 
 document.getElementById('btn-gerar').addEventListener('click', async function() {
   const dados = {
-    processo: document.getElementById('processo').value,
-    vara: document.getElementById('vara').value,
+    processo:    document.getElementById('processo').value,
+    vara:        document.getElementById('vara').value,
     participante: document.getElementById('participante').value,
-    demanda: document.getElementById('demanda').value,
-    entrega: document.getElementById('entrega').value
+    demanda:     document.getElementById('demanda').value,
+    entrega:     document.getElementById('entrega').value
   };
   if (!dados.participante) { showToast('Informe o nome do Autor/Reclamante.', 'error'); return; }
   document.getElementById('loading').classList.add('ativo');
@@ -367,13 +482,21 @@ document.getElementById('btn-gerar').addEventListener('click', async function() 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ topicos: selecionados.map(t => ({ nome: t.nome, path: t.path })), dados: dados })
+      body: JSON.stringify({
+        topicos: selecionados.map(t => ({
+          nome:            t.nome,
+          path:            t.path,
+          topico_principal: t.topico_principal || false,
+          ultima_pagina:   t.ultima_pagina || false
+        })),
+        dados
+      })
     });
-    if (!r.ok) { const e = await r.json(); throw new Error(e.erro || 'Erro'); }
+    if (!r.ok) { const e = await r.json(); throw new Error(e.erro || 'Erro desconhecido'); }
     const blob = await r.blob();
-    const a = document.createElement('a');
+    const a    = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    const proc = dados.processo.replace(/[\/\.]/g, '-').substring(0, 20) || 'sp';
+    const proc = (dados.processo || 'sp').replace(/[\/\.]/g, '-').substring(0, 20);
     a.download = proc + '_Parecer Tecnico.rev001.docx';
     a.click();
     showToast('Parecer gerado com sucesso!', 'success');
