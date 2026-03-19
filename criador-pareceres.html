@@ -184,7 +184,6 @@ textarea{resize:vertical;min-height:60px;}
         <div class="panel-title">Estrutura <span id="badge-estrutura"></span></div>
         <div class="panel-sub">Tópicos estruturais do parecer</div>
       </div>
-      <div class="search-wrap"><input type="text" id="busca-estrutura" placeholder="Buscar..."></div>
       <div class="panel-body" id="estrutura-container"><div class="empty-msg">Carregando...</div></div>
     </div>
 
@@ -290,13 +289,9 @@ async function carregarEstrutura() {
     estruturaTopicos = d.topicos || [];
     const total = estruturaTopicos.filter(t => !t.path.toLowerCase().includes('arquivos inativos')).length;
     document.getElementById('badge-estrutura').innerHTML = total ? '<span class="badge">'+total+'</span>' : '';
-    renderColuna('estrutura', estruturaTopicos, document.getElementById('busca-estrutura').value.toLowerCase());
+    renderColuna('estrutura', estruturaTopicos, '');
   } catch { document.getElementById('estrutura-container').innerHTML='<div class="empty-msg">Erro ao carregar.</div>'; }
 }
-
-document.getElementById('busca-estrutura').addEventListener('input', function(){
-  renderColuna('estrutura', estruturaTopicos, this.value.toLowerCase());
-});
 
 // ── BANCO DE TESES ────────────────────────────────────────────────────────────
 
@@ -365,8 +360,8 @@ function renderColuna(tipo, lista, filtro) {
 
     const g   = document.createElement('div'); g.className='categoria-group';
     const lbl = document.createElement('div');
-    // Estrutura: fechado por padrão. Banco de Teses: aberto por padrão.
-    const fechado = (tipo === 'estrutura' && !filtro) || inativos;
+    // Estrutura: aberto por padrão. Banco de Teses: fechado por padrão (exceto durante busca).
+    const fechado = (tipo === 'banco' && !filtro) || inativos;
     lbl.className = 'categoria-label' + (fechado ? ' collapsed' : '');
     lbl.innerHTML = '<span class="cat-arrow">▾</span> '+label+' <span class="cat-count">'+items.length+'</span>';
 
@@ -407,7 +402,7 @@ function toggleItem(t, tipo, containerId, lista, filtro) {
   }
   // Re-render a coluna que foi clicada
   const f = tipo==='estrutura'
-    ? document.getElementById('busca-estrutura').value.toLowerCase()
+    ? ''
     : document.getElementById('busca-banco').value.toLowerCase();
   renderColuna(tipo, lista, f);
   renderSelecionados();
@@ -456,7 +451,7 @@ function renderSelecionados() {
       const gi = selecionados.findIndex(x => x._chave === t._chave);
       if (gi >= 0) selecionados.splice(gi, 1);
       // Re-render ambas as colunas para desmarcar check
-      renderColuna('estrutura', estruturaTopicos, document.getElementById('busca-estrutura').value.toLowerCase());
+      renderColuna('estrutura', estruturaTopicos, '');
       renderColuna('banco', bancoTopicos[clienteAtivo]||[], document.getElementById('busca-banco').value.toLowerCase());
       renderSelecionados();
     };
