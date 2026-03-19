@@ -7,122 +7,131 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --roxo: #5c3d9e; --roxo-escuro: #3b2370; --roxo-suave: #f0ebfa;
-  --roxo-borda: #d8ccf0; --roxo-hover: #ede6f8; --branco: #ffffff;
-  --cinza-bg: #f7f7f9; --cinza-linha: #e8e8ed; --cinza-texto: #888899;
-  --texto: #1a1a2e; --verde: #27ae60; --vermelho: #e74c3c;
-  --laranja: #e67e22; --radius: 6px;
+  --roxo:#5c3d9e; --roxo-escuro:#3b2370; --roxo-suave:#f0ebfa;
+  --roxo-borda:#d8ccf0; --roxo-hover:#ede6f8; --branco:#ffffff;
+  --cinza-bg:#f7f7f9; --cinza-linha:#e8e8ed; --cinza-texto:#888899;
+  --texto:#1a1a2e; --verde:#27ae60; --vermelho:#e74c3c; --laranja:#e67e22;
+  --azul:#1a6dc9; --radius:6px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background: var(--cinza-bg); color: var(--texto); min-height: 100vh; font-size: 13px; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--cinza-bg);color:var(--texto);min-height:100vh;font-size:13px;}
 
 /* LOGIN */
-#login-screen { display: none; position: fixed; inset: 0; background: var(--cinza-bg); z-index: 500; align-items: center; justify-content: center; }
-#login-screen.ativo { display: flex; }
-.login-box { background: var(--branco); border: 1px solid var(--cinza-linha); border-radius: 10px; padding: 40px 36px; width: 340px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); display: flex; flex-direction: column; align-items: center; gap: 18px; }
-.login-logo { height: 34px; }
-.login-titulo { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--roxo); text-align: center; }
-.login-sub { font-size: 12px; color: var(--cinza-texto); text-align: center; margin-top: -10px; }
-.login-campo { width: 100%; }
-.login-campo label { display: block; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600; color: var(--cinza-texto); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
-.login-campo input { width: 100%; background: var(--branco); border: 1px solid var(--cinza-linha); border-radius: var(--radius); color: var(--texto); font-family: 'Inter', sans-serif; font-size: 14px; padding: 10px 13px; outline: none; transition: border-color 0.2s; }
-.login-campo input:focus { border-color: var(--roxo); }
-#login-erro { color: var(--vermelho); font-size: 12px; text-align: center; display: none; width: 100%; }
-#btn-entrar { width: 100%; background: var(--roxo); color: white; border: none; border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; padding: 12px; cursor: pointer; transition: background 0.2s; }
-#btn-entrar:hover { background: var(--roxo-escuro); }
-#btn-entrar:disabled { background: var(--cinza-linha); color: var(--cinza-texto); cursor: not-allowed; }
+#login-screen{display:none;position:fixed;inset:0;background:var(--cinza-bg);z-index:500;align-items:center;justify-content:center;}
+#login-screen.ativo{display:flex;}
+.login-box{background:var(--branco);border:1px solid var(--cinza-linha);border-radius:10px;padding:40px 36px;width:340px;box-shadow:0 4px 24px rgba(0,0,0,.07);display:flex;flex-direction:column;align-items:center;gap:18px;}
+.login-logo{height:34px;}
+.login-titulo{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--roxo);text-align:center;}
+.login-sub{font-size:12px;color:var(--cinza-texto);text-align:center;margin-top:-10px;}
+.login-campo{width:100%;}
+.login-campo label{display:block;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;color:var(--cinza-texto);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+.login-campo input{width:100%;background:var(--branco);border:1px solid var(--cinza-linha);border-radius:var(--radius);color:var(--texto);font-family:'Inter',sans-serif;font-size:14px;padding:10px 13px;outline:none;transition:border-color .2s;}
+.login-campo input:focus{border-color:var(--roxo);}
+#login-erro{color:var(--vermelho);font-size:12px;text-align:center;display:none;width:100%;}
+#btn-entrar{width:100%;background:var(--roxo);color:white;border:none;border-radius:var(--radius);font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:12px;cursor:pointer;transition:background .2s;}
+#btn-entrar:hover{background:var(--roxo-escuro);}
+#btn-entrar:disabled{background:var(--cinza-linha);color:var(--cinza-texto);cursor:not-allowed;}
 
 /* APP */
-#app { display: none; }
-#app.ativo { display: block; }
-header { background: var(--branco); border-bottom: 1px solid var(--cinza-linha); padding: 0 28px; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-.header-esq { display: flex; align-items: center; gap: 16px; }
-.logo-img { height: 30px; width: auto; }
-.logo-div { width: 1px; height: 22px; background: var(--cinza-linha); }
-.logo-sub { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cinza-texto); }
-.status-wrap { display: flex; align-items: center; gap: 7px; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--cinza-linha); background: var(--cinza-bg); }
-#status-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
-#status-dot.ok { background: var(--verde); }
-#status-dot.err { background: var(--vermelho); }
-#status-label { color: var(--cinza-texto); font-size: 11px; font-family: 'Montserrat', sans-serif; }
+#app{display:none;}
+#app.ativo{display:block;}
+header{background:var(--branco);border-bottom:1px solid var(--cinza-linha);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.header-esq{display:flex;align-items:center;gap:16px;}
+.logo-img{height:30px;width:auto;}
+.logo-div{width:1px;height:22px;background:var(--cinza-linha);}
+.logo-sub{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--cinza-texto);}
+.status-wrap{display:flex;align-items:center;gap:7px;padding:4px 12px;border-radius:20px;border:1px solid var(--cinza-linha);background:var(--cinza-bg);}
+#status-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0;}
+#status-dot.ok{background:var(--verde);}
+#status-dot.err{background:var(--vermelho);}
+#status-label{color:var(--cinza-texto);font-size:11px;font-family:'Montserrat',sans-serif;}
 
-.layout { display: grid; grid-template-columns: 300px 1fr 290px; height: calc(100vh - 56px); overflow: hidden; }
-.panel { border-right: 1px solid var(--cinza-linha); display: flex; flex-direction: column; overflow: hidden; background: var(--branco); }
-.panel:last-child { border-right: none; }
-.panel-header { padding: 14px 20px 12px; border-bottom: 1px solid var(--cinza-linha); background: var(--branco); flex-shrink: 0; }
-.panel-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--roxo); margin-bottom: 2px; }
-.panel-sub { color: var(--cinza-texto); font-size: 11px; }
-.panel-body { flex: 1; overflow-y: auto; padding: 16px 18px; background: var(--cinza-bg); }
-.panel-body::-webkit-scrollbar { width: 3px; }
-.panel-body::-webkit-scrollbar-thumb { background: var(--roxo-borda); border-radius: 2px; }
+/* LAYOUT 4 COLUNAS */
+.layout{display:grid;grid-template-columns:260px 220px 1fr 280px;height:calc(100vh - 56px);overflow:hidden;}
+.panel{border-right:1px solid var(--cinza-linha);display:flex;flex-direction:column;overflow:hidden;background:var(--branco);}
+.panel:last-child{border-right:none;}
+.panel-header{padding:14px 16px 12px;border-bottom:1px solid var(--cinza-linha);background:var(--branco);flex-shrink:0;}
+.panel-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--roxo);margin-bottom:2px;}
+.panel-sub{color:var(--cinza-texto);font-size:11px;}
+.panel-body{flex:1;overflow-y:auto;padding:14px 14px;background:var(--cinza-bg);}
+.panel-body::-webkit-scrollbar{width:3px;}
+.panel-body::-webkit-scrollbar-thumb{background:var(--roxo-borda);border-radius:2px;}
 
-.field { margin-bottom: 13px; }
-label { display: block; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600; color: var(--cinza-texto); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
-input, textarea { width: 100%; background: var(--branco); border: 1px solid var(--cinza-linha); border-radius: var(--radius); color: var(--texto); font-family: 'Inter', sans-serif; font-size: 13px; padding: 8px 11px; transition: border-color 0.2s; outline: none; }
-input::placeholder, textarea::placeholder { color: #bbb; }
-input:focus, textarea:focus { border-color: var(--roxo); }
-textarea { resize: vertical; min-height: 70px; }
+/* DADOS DO CASO */
+.field{margin-bottom:12px;}
+label{display:block;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;color:var(--cinza-texto);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+input,textarea{width:100%;background:var(--branco);border:1px solid var(--cinza-linha);border-radius:var(--radius);color:var(--texto);font-family:'Inter',sans-serif;font-size:13px;padding:7px 10px;transition:border-color .2s;outline:none;}
+input::placeholder,textarea::placeholder{color:#bbb;}
+input:focus,textarea:focus{border-color:var(--roxo);}
+textarea{resize:vertical;min-height:60px;}
 
-.search-wrap { padding: 10px 18px; border-bottom: 1px solid var(--cinza-linha); flex-shrink: 0; background: var(--branco); }
-.categoria-group { margin-bottom: 4px; }
-.categoria-label { font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--cinza-texto); padding: 7px 4px 4px; cursor: pointer; display: flex; align-items: center; gap: 6px; user-select: none; }
-.categoria-label:hover { color: var(--roxo); }
-.cat-arrow { font-size: 9px; transition: transform 0.2s; color: #ccc; }
-.categoria-label.collapsed .cat-arrow { transform: rotate(-90deg); }
-.cat-count { margin-left: auto; background: var(--roxo-suave); color: var(--roxo); font-size: 9px; border-radius: 8px; padding: 1px 6px; font-weight: 700; }
-.topicos-list { display: flex; flex-direction: column; gap: 1px; padding-bottom: 4px; }
-.topicos-list.hidden { display: none; }
-.topico-item { display: flex; align-items: center; gap: 9px; padding: 6px 8px; border-radius: 5px; cursor: pointer; transition: background 0.1s; border: 1px solid transparent; }
-.topico-item:hover { background: var(--roxo-hover); }
-.topico-item.sel { background: var(--roxo-suave); border-color: var(--roxo-borda); }
-.topico-check { width: 15px; height: 15px; border-radius: 3px; border: 1.5px solid var(--cinza-linha); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; }
-.topico-item.sel .topico-check { background: var(--roxo); border-color: var(--roxo); color: white; }
-.topico-nome { font-size: 12px; line-height: 1.35; flex: 1; }
+/* SELETOR DE CLIENTE */
+.cliente-wrap{padding:10px 14px;border-bottom:1px solid var(--cinza-linha);flex-shrink:0;background:var(--branco);display:flex;gap:6px;}
+.btn-cliente{flex:1;padding:6px 4px;border-radius:var(--radius);border:1.5px solid var(--cinza-linha);background:var(--cinza-bg);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;color:var(--cinza-texto);cursor:pointer;transition:all .15s;text-transform:uppercase;}
+.btn-cliente:hover{border-color:var(--roxo-borda);color:var(--roxo);}
+.btn-cliente.ativo{background:var(--roxo);border-color:var(--roxo);color:white;}
 
-/* Badges de tipo */
-.badge-tipo { font-size: 9px; font-weight: 700; font-family: 'Montserrat', sans-serif; padding: 1px 5px; border-radius: 4px; flex-shrink: 0; }
-.badge-topico { background: #eaf3ff; color: #1a6dc9; }
-.badge-ultima { background: #fff3e0; color: #c46c00; }
+/* BUSCA */
+.search-wrap{padding:9px 14px;border-bottom:1px solid var(--cinza-linha);flex-shrink:0;background:var(--branco);}
 
-.sel-list { display: flex; flex-direction: column; gap: 4px; }
-.sel-item { background: var(--branco); border: 1px solid var(--cinza-linha); border-radius: 5px; padding: 8px 10px; display: flex; align-items: flex-start; gap: 7px; cursor: grab; }
-.sel-item:hover { border-color: var(--roxo-borda); }
-.sel-item.dragging { opacity: 0.35; }
-.sel-item.drag-over { border-color: var(--roxo); box-shadow: 0 0 0 2px var(--roxo-suave); }
-.sel-item.ultima-pagina { border-left: 3px solid var(--laranja); cursor: default; }
-.drag-handle { color: #ccc; font-size: 11px; padding-top: 2px; flex-shrink: 0; }
-.sel-item.ultima-pagina .drag-handle { color: #eee; cursor: not-allowed; }
-.sel-nome { font-size: 12px; flex: 1; line-height: 1.4; }
-.sel-cat { font-size: 10px; color: var(--cinza-texto); margin-top: 1px; }
-.sel-tipo-tag { font-size: 9px; color: var(--laranja); font-weight: 700; margin-top: 1px; }
-.rm-btn { background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px; padding: 0; flex-shrink: 0; line-height: 1; }
-.rm-btn:hover { color: var(--vermelho); }
+/* GRUPOS / TÓPICOS */
+.categoria-group{margin-bottom:3px;}
+.categoria-label{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--cinza-texto);padding:7px 4px 4px;cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none;}
+.categoria-label:hover{color:var(--roxo);}
+.cat-arrow{font-size:9px;transition:transform .2s;color:#ccc;}
+.categoria-label.collapsed .cat-arrow{transform:rotate(-90deg);}
+.cat-count{margin-left:auto;background:var(--roxo-suave);color:var(--roxo);font-size:9px;border-radius:8px;padding:1px 6px;font-weight:700;}
+.topicos-list{display:flex;flex-direction:column;gap:1px;padding-bottom:4px;}
+.topicos-list.hidden{display:none;}
+.topico-item{display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:5px;cursor:pointer;transition:background .1s;border:1px solid transparent;}
+.topico-item:hover{background:var(--roxo-hover);}
+.topico-item.sel{background:var(--roxo-suave);border-color:var(--roxo-borda);}
+.topico-check{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--cinza-linha);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;}
+.topico-item.sel .topico-check{background:var(--roxo);border-color:var(--roxo);color:white;}
+.topico-nome{font-size:12px;line-height:1.35;flex:1;}
+.badge-tipo{font-size:9px;font-weight:700;font-family:'Montserrat',sans-serif;padding:1px 5px;border-radius:4px;flex-shrink:0;}
+.badge-ultima{background:#fff3e0;color:#c46c00;}
 
-.empty-msg { color: var(--cinza-texto); font-size: 12px; text-align: center; padding: 32px 12px; line-height: 1.7; }
-.badge { background: var(--roxo); color: white; font-size: 10px; font-weight: 700; border-radius: 10px; padding: 1px 7px; margin-left: 5px; font-family: 'Montserrat', sans-serif; }
+/* PARECER */
+.sel-list{display:flex;flex-direction:column;gap:4px;}
+.sel-item{background:var(--branco);border:1px solid var(--cinza-linha);border-radius:5px;padding:7px 9px;display:flex;align-items:flex-start;gap:6px;cursor:grab;}
+.sel-item:hover{border-color:var(--roxo-borda);}
+.sel-item.dragging{opacity:.35;}
+.sel-item.drag-over{border-color:var(--roxo);box-shadow:0 0 0 2px var(--roxo-suave);}
+.sel-item.ultima-pagina{border-left:3px solid var(--laranja);cursor:default;}
+.sel-item.is-estrutura{border-left:3px solid var(--azul);}
+.drag-handle{color:#ccc;font-size:11px;padding-top:2px;flex-shrink:0;}
+.sel-item.ultima-pagina .drag-handle{color:#eee;cursor:not-allowed;}
+.sel-nome{font-size:12px;flex:1;line-height:1.4;}
+.sel-cat{font-size:10px;color:var(--cinza-texto);margin-top:1px;}
+.sel-tipo-tag{font-size:9px;font-weight:700;margin-top:1px;}
+.rm-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:0;flex-shrink:0;line-height:1;}
+.rm-btn:hover{color:var(--vermelho);}
+.sep-ultima{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--laranja);padding:8px 4px 4px;border-top:1px dashed #ffe0b2;margin-top:4px;}
+.sep-estrutura{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--azul);padding:8px 4px 4px;border-top:1px dashed #cce0ff;margin-top:4px;}
 
-.gerar-wrap { padding: 14px 18px; border-top: 1px solid var(--cinza-linha); flex-shrink: 0; background: var(--branco); }
-.btn-gerar { width: 100%; background: var(--roxo); color: white; border: none; border-radius: var(--radius); font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; padding: 11px; cursor: pointer; transition: background 0.2s; }
-.btn-gerar:hover:not(:disabled) { background: var(--roxo-escuro); }
-.btn-gerar:disabled { background: var(--cinza-linha); color: var(--cinza-texto); cursor: not-allowed; }
+.empty-msg{color:var(--cinza-texto);font-size:12px;text-align:center;padding:28px 10px;line-height:1.7;}
+.badge{background:var(--roxo);color:white;font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px;margin-left:5px;font-family:'Montserrat',sans-serif;}
 
-.loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.75); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
-.loading-overlay.ativo { display: flex; }
-.spinner { width: 30px; height: 30px; border: 2px solid var(--cinza-linha); border-top-color: var(--roxo); border-radius: 50%; animation: spin 0.7s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-txt { font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 0.1em; color: var(--cinza-texto); text-transform: uppercase; }
+.gerar-wrap{padding:12px 14px;border-top:1px solid var(--cinza-linha);flex-shrink:0;background:var(--branco);}
+.btn-gerar{width:100%;background:var(--roxo);color:white;border:none;border-radius:var(--radius);font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:11px;cursor:pointer;transition:background .2s;}
+.btn-gerar:hover:not(:disabled){background:var(--roxo-escuro);}
+.btn-gerar:disabled{background:var(--cinza-linha);color:var(--cinza-texto);cursor:not-allowed;}
 
-#toast { position: fixed; bottom: 20px; right: 20px; background: var(--branco); border: 1px solid var(--cinza-linha); border-radius: var(--radius); padding: 11px 18px; font-size: 13px; z-index: 999; opacity: 0; transform: translateY(6px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; max-width: 300px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-#toast.show { opacity: 1; transform: translateY(0); }
-#toast.success { border-color: var(--verde); }
-#toast.error { border-color: var(--vermelho); }
-
-.sep-ultima { font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--laranja); padding: 8px 4px 4px; border-top: 1px dashed #ffe0b2; margin-top: 4px; }
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.75);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+.loading-overlay.ativo{display:flex;}
+.spinner{width:30px;height:30px;border:2px solid var(--cinza-linha);border-top-color:var(--roxo);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-txt{font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:.1em;color:var(--cinza-texto);text-transform:uppercase;}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--branco);border:1px solid var(--cinza-linha);border-radius:var(--radius);padding:11px 18px;font-size:13px;z-index:999;opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s;pointer-events:none;max-width:300px;box-shadow:0 4px 16px rgba(0,0,0,.1);}
+#toast.show{opacity:1;transform:translateY(0);}
+#toast.success{border-color:var(--verde);}
+#toast.error{border-color:var(--vermelho);}
 </style>
 </head>
 <body>
 
-<!-- TELA DE LOGIN -->
+<!-- LOGIN -->
 <div id="login-screen" class="ativo">
   <div class="login-box">
     <img class="login-logo" src="data:image/jpeg;base64,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" alt="Lumens Atuarial">
@@ -137,7 +146,7 @@ textarea { resize: vertical; min-height: 70px; }
   </div>
 </div>
 
-<!-- APP PRINCIPAL -->
+<!-- APP -->
 <div id="app">
   <header>
     <div class="header-esq">
@@ -152,7 +161,8 @@ textarea { resize: vertical; min-height: 70px; }
   </header>
 
   <div class="layout">
-    <!-- COLUNA 1: DADOS -->
+
+    <!-- COL 1: DADOS DO CASO -->
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">Dados do Caso</div>
@@ -167,25 +177,40 @@ textarea { resize: vertical; min-height: 70px; }
       </div>
     </div>
 
-    <!-- COLUNA 2: BANCO DE TESES -->
+    <!-- COL 2: ESTRUTURA -->
     <div class="panel">
       <div class="panel-header">
-        <div class="panel-title">Banco de Teses <span id="badge-total"></span></div>
-        <div class="panel-sub">Clique para adicionar ao parecer</div>
+        <div class="panel-title">Estrutura <span id="badge-estrutura"></span></div>
+        <div class="panel-sub">Tópicos estruturais do parecer</div>
       </div>
-      <div class="search-wrap"><input type="text" id="busca" placeholder="Buscar tópico..."></div>
-      <div class="panel-body" id="topicos-container"><div class="empty-msg">Carregando tópicos...</div></div>
+      <div class="search-wrap"><input type="text" id="busca-estrutura" placeholder="Buscar..."></div>
+      <div class="panel-body" id="estrutura-container"><div class="empty-msg">Carregando...</div></div>
     </div>
 
-    <!-- COLUNA 3: PARECER -->
+    <!-- COL 3: BANCO DE TESES -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Banco de Teses <span id="badge-banco"></span></div>
+        <div class="panel-sub">Selecione o cliente</div>
+      </div>
+      <div class="cliente-wrap">
+        <button class="btn-cliente ativo" id="btn-previ" onclick="selecionarCliente('PREVI')">PREVI</button>
+        <button class="btn-cliente" id="btn-elos" onclick="selecionarCliente('ELOS')">ELOS</button>
+      </div>
+      <div class="search-wrap"><input type="text" id="busca-banco" placeholder="Buscar impugnação..."></div>
+      <div class="panel-body" id="banco-container"><div class="empty-msg">Carregando...</div></div>
+    </div>
+
+    <!-- COL 4: PARECER -->
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">Parecer <span id="badge-sel"></span></div>
         <div class="panel-sub">Arraste para reordenar</div>
       </div>
-      <div class="panel-body"><div id="sel-list" class="sel-list"><div class="empty-msg">Nenhum tópico selecionado.<br>Clique nos tópicos ao lado.</div></div></div>
+      <div class="panel-body"><div id="sel-list" class="sel-list"><div class="empty-msg">Nenhum item selecionado.</div></div></div>
       <div class="gerar-wrap"><button class="btn-gerar" id="btn-gerar" disabled>Gerar Parecer</button></div>
     </div>
+
   </div>
 </div>
 
@@ -194,14 +219,17 @@ textarea { resize: vertical; min-height: 70px; }
 
 <script>
 const API = 'https://criador-de-pareceres.onrender.com';
-let todosTopicos = [], selecionados = [], dragSrc = null;
 
-// ── LOGIN ────────────────────────────────────────────────────────────────────
+let estruturaTopicos = [];   // todos os itens da coluna Estrutura
+let bancoTopicos     = {};   // cache por cliente: { PREVI: [...], ELOS: [...] }
+let clienteAtivo     = 'PREVI';
+let selecionados     = [];   // itens no painel Parecer
+let dragSrc          = null;
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
 
 document.getElementById('btn-entrar').addEventListener('click', fazerLogin);
-document.getElementById('campo-senha').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') fazerLogin();
-});
+document.getElementById('campo-senha').addEventListener('keydown', e => { if(e.key==='Enter') fazerLogin(); });
 
 async function fazerLogin() {
   const senha = document.getElementById('campo-senha').value.trim();
@@ -211,92 +239,108 @@ async function fazerLogin() {
   if (!senha) return;
   btn.disabled = true; btn.textContent = 'Entrando...';
   try {
-    const resp = await fetch(API + '/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ senha })
+    const r = await fetch(API+'/api/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      credentials:'include', body: JSON.stringify({senha})
     });
-    if (resp.ok) { entrarNoApp(); }
-    else {
-      erro.textContent = 'Senha incorreta. Tente novamente.';
-      erro.style.display = 'block';
-      document.getElementById('campo-senha').value = '';
-    }
-  } catch(e) {
-    erro.textContent = 'Erro de conexão. Tente novamente.';
-    erro.style.display = 'block';
-  }
-  btn.disabled = false; btn.textContent = 'Entrar';
+    if (r.ok) { entrarNoApp(); }
+    else { erro.textContent='Senha incorreta. Tente novamente.'; erro.style.display='block'; document.getElementById('campo-senha').value=''; }
+  } catch { erro.textContent='Erro de conexão.'; erro.style.display='block'; }
+  btn.disabled=false; btn.textContent='Entrar';
 }
 
 async function verificarSessao() {
   try {
-    const resp = await fetch(API + '/api/check', { credentials: 'include' });
-    const d = await resp.json();
-    if (d.autenticado) { entrarNoApp(); }
-    else { document.getElementById('login-screen').classList.add('ativo'); }
-  } catch {
-    document.getElementById('login-screen').classList.add('ativo');
-  }
+    const r = await fetch(API+'/api/check', {credentials:'include'});
+    const d = await r.json();
+    if (d.autenticado) entrarNoApp();
+    else document.getElementById('login-screen').classList.add('ativo');
+  } catch { document.getElementById('login-screen').classList.add('ativo'); }
 }
 
 function entrarNoApp() {
   document.getElementById('login-screen').classList.remove('ativo');
   document.getElementById('app').classList.add('ativo');
   checkStatus();
-  carregarTopicos();
+  carregarEstrutura();
+  carregarBanco('PREVI');
 }
 
-// ── STATUS ───────────────────────────────────────────────────────────────────
+// ── STATUS ────────────────────────────────────────────────────────────────────
 
 async function checkStatus() {
   try {
-    const r = await fetch(API + '/api/status', { credentials: 'include' });
+    const r = await fetch(API+'/api/status', {credentials:'include'});
     const d = await r.json();
     const dot = document.getElementById('status-dot');
     const lbl = document.getElementById('status-label');
     dot.className = (d.dropbox_configurado && d.template_ok) ? 'ok' : 'err';
     lbl.textContent = !d.dropbox_configurado ? 'Dropbox não configurado'
-                    : !d.template_ok         ? 'Template não encontrado'
-                    : 'Pronto';
-  } catch {
-    document.getElementById('status-dot').className = 'err';
-    document.getElementById('status-label').textContent = 'Backend offline';
-  }
+                    : !d.template_ok ? 'Template não encontrado' : 'Pronto';
+  } catch { document.getElementById('status-dot').className='err'; document.getElementById('status-label').textContent='Backend offline'; }
 }
 
-// ── TÓPICOS ──────────────────────────────────────────────────────────────────
+// ── ESTRUTURA ─────────────────────────────────────────────────────────────────
 
-async function carregarTopicos() {
+async function carregarEstrutura() {
   try {
-    const r = await fetch(API + '/api/topicos', { credentials: 'include' });
+    const r = await fetch(API+'/api/estrutura', {credentials:'include'});
     const d = await r.json();
-    todosTopicos = d.topicos || [];
-    const ativos = todosTopicos.filter(t => !t.path.toLowerCase().includes('arquivos inativos'));
-    document.getElementById('badge-total').innerHTML = '<span class="badge">' + ativos.length + '</span>';
-    renderTopicos(todosTopicos);
-  } catch {
-    document.getElementById('topicos-container').innerHTML = '<div class="empty-msg">Erro ao carregar tópicos.</div>';
+    estruturaTopicos = d.topicos || [];
+    const total = estruturaTopicos.filter(t => !t.path.toLowerCase().includes('arquivos inativos')).length;
+    document.getElementById('badge-estrutura').innerHTML = total ? '<span class="badge">'+total+'</span>' : '';
+    renderColuna('estrutura', estruturaTopicos, document.getElementById('busca-estrutura').value.toLowerCase());
+  } catch { document.getElementById('estrutura-container').innerHTML='<div class="empty-msg">Erro ao carregar.</div>'; }
+}
+
+document.getElementById('busca-estrutura').addEventListener('input', function(){
+  renderColuna('estrutura', estruturaTopicos, this.value.toLowerCase());
+});
+
+// ── BANCO DE TESES ────────────────────────────────────────────────────────────
+
+async function carregarBanco(cliente) {
+  const container = document.getElementById('banco-container');
+  container.innerHTML = '<div class="empty-msg">Carregando...</div>';
+  try {
+    const r = await fetch(API+'/api/topicos?cliente='+cliente, {credentials:'include'});
+    const d = await r.json();
+    bancoTopicos[cliente] = d.topicos || [];
+    const total = bancoTopicos[cliente].filter(t => !t.path.toLowerCase().includes('arquivos inativos')).length;
+    document.getElementById('badge-banco').innerHTML = total ? '<span class="badge">'+total+'</span>' : '';
+    renderColuna('banco', bancoTopicos[cliente], document.getElementById('busca-banco').value.toLowerCase());
+  } catch { container.innerHTML='<div class="empty-msg">Erro ao carregar.</div>'; }
+}
+
+function selecionarCliente(cliente) {
+  clienteAtivo = cliente;
+  document.getElementById('btn-previ').classList.toggle('ativo', cliente==='PREVI');
+  document.getElementById('btn-elos').classList.toggle('ativo', cliente==='ELOS');
+  document.getElementById('busca-banco').value = '';
+  if (bancoTopicos[cliente]) {
+    const total = bancoTopicos[cliente].filter(t => !t.path.toLowerCase().includes('arquivos inativos')).length;
+    document.getElementById('badge-banco').innerHTML = total ? '<span class="badge">'+total+'</span>' : '';
+    renderColuna('banco', bancoTopicos[cliente], '');
+  } else {
+    carregarBanco(cliente);
   }
 }
 
-// Ordem de prioridade de pastas (lowercase)
-const PASTAS_PRIORIDADE = ['base', 'quesitos'];
+document.getElementById('busca-banco').addEventListener('input', function(){
+  const lista = bancoTopicos[clienteAtivo] || [];
+  renderColuna('banco', lista, this.value.toLowerCase());
+});
 
-function sortKeyCategoria(catLower) {
-  const idx = PASTAS_PRIORIDADE.indexOf(catLower);
-  return idx >= 0 ? idx : PASTAS_PRIORIDADE.length + 1;
-}
+// ── RENDER COLUNA (compartilhado por Estrutura e Banco) ───────────────────────
 
-function renderTopicos(lista) {
-  const container = document.getElementById('topicos-container');
-  const filtro    = document.getElementById('busca').value.toLowerCase();
-  const toRender  = filtro
+function renderColuna(tipo, lista, filtro) {
+  const containerId = tipo === 'estrutura' ? 'estrutura-container' : 'banco-container';
+  const container   = document.getElementById(containerId);
+
+  const toRender = filtro
     ? lista.filter(t => t.nome.toLowerCase().includes(filtro) || t.categoria.toLowerCase().includes(filtro))
     : lista.filter(t => !t.path.toLowerCase().includes('arquivos inativos'));
 
-  // Agrupar por categoria
   const grupos = {};
   toRender.forEach(t => {
     const cat = t.path.toLowerCase().includes('arquivos inativos') ? '__inativos' : t.categoria;
@@ -304,20 +348,12 @@ function renderTopicos(lista) {
     grupos[cat].push(t);
   });
 
-  if (!Object.keys(grupos).length) {
-    container.innerHTML = '<div class="empty-msg">Nenhum tópico encontrado.</div>';
-    return;
-  }
-
+  if (!Object.keys(grupos).length) { container.innerHTML='<div class="empty-msg">Nenhum item encontrado.</div>'; return; }
   container.innerHTML = '';
 
-  // Ordenar categorias: prioridade fixa + alfabética
-  const cats = Object.keys(grupos).sort((a, b) => {
-    if (a === '__inativos') return 1;
-    if (b === '__inativos') return -1;
-    const ka = sortKeyCategoria(a.toLowerCase());
-    const kb = sortKeyCategoria(b.toLowerCase());
-    if (ka !== kb) return ka - kb;
+  const cats = Object.keys(grupos).sort((a,b) => {
+    if (a==='__inativos') return 1;
+    if (b==='__inativos') return -1;
     return a.localeCompare(b, 'pt-BR');
   });
 
@@ -326,31 +362,29 @@ function renderTopicos(lista) {
     const inativos = cat === '__inativos';
     const label    = inativos ? '⚠ Arquivos Inativos' : cat;
 
-    const g   = document.createElement('div'); g.className = 'categoria-group';
+    const g   = document.createElement('div'); g.className='categoria-group';
     const lbl = document.createElement('div');
-    lbl.className = 'categoria-label' + (inativos && !filtro ? ' collapsed' : '');
-    lbl.innerHTML = '<span class="cat-arrow">▾</span> ' + label + ' <span class="cat-count">' + items.length + '</span>';
+    // Grupos SEMPRE fechados por padrão (collapsed), exceto durante busca
+    lbl.className = 'categoria-label' + (filtro ? '' : ' collapsed');
+    lbl.innerHTML = '<span class="cat-arrow">▾</span> '+label+' <span class="cat-count">'+items.length+'</span>';
 
     const lst = document.createElement('div');
-    lst.className = 'topicos-list' + (inativos && !filtro ? ' hidden' : '');
+    lst.className = 'topicos-list' + (filtro ? '' : ' hidden');
     lbl.onclick = () => { lbl.classList.toggle('collapsed'); lst.classList.toggle('hidden'); };
 
     items.forEach(t => {
-      const sel  = !!selecionados.find(x => x.id === t.id);
+      const sel  = !!selecionados.find(x => x.id === t.id && x._tipo === tipo);
       const item = document.createElement('div');
       item.className = 'topico-item' + (sel ? ' sel' : '');
 
-      // Badge visual de tipo
       let badgeHtml = '';
-      if (t.topico_principal) badgeHtml = '<span class="badge-tipo badge-topico">TÓPICO</span>';
-      if (t.ultima_pagina)    badgeHtml = '<span class="badge-tipo badge-ultima">ÚLTIMA PÁG.</span>';
+      if (t.ultima_pagina) badgeHtml = '<span class="badge-tipo badge-ultima">ÚLTIMA PÁG.</span>';
 
       item.innerHTML =
-        '<div class="topico-check">' + (sel ? '✓' : '') + '</div>' +
-        '<div class="topico-nome">' + t.nome + '</div>' +
-        badgeHtml;
+        '<div class="topico-check">'+(sel?'✓':'')+'</div>'+
+        '<div class="topico-nome">'+t.nome+'</div>'+badgeHtml;
 
-      item.onclick = () => toggleTopico(t);
+      item.onclick = () => toggleItem(t, tipo, containerId, lista, filtro);
       lst.appendChild(item);
     });
 
@@ -358,94 +392,90 @@ function renderTopicos(lista) {
   });
 }
 
-function toggleTopico(t) {
-  const idx = selecionados.findIndex(x => x.id === t.id);
-  if (idx >= 0) selecionados.splice(idx, 1);
-  else selecionados.push(t);
-  const filtro = document.getElementById('busca').value.toLowerCase();
-  renderTopicos(filtro
-    ? todosTopicos.filter(t => t.nome.toLowerCase().includes(filtro) || t.categoria.toLowerCase().includes(filtro))
-    : todosTopicos);
+// ── TOGGLE ITEM ───────────────────────────────────────────────────────────────
+
+function toggleItem(t, tipo, containerId, lista, filtro) {
+  // Cada item tem um identificador único: id + tipo (estrutura vs banco+cliente)
+  const chave = t.id + '|' + tipo + (tipo==='banco' ? '|'+clienteAtivo : '');
+  const idx   = selecionados.findIndex(x => x._chave === chave);
+  if (idx >= 0) {
+    selecionados.splice(idx, 1);
+  } else {
+    selecionados.push({ ...t, _tipo: tipo, _cliente: tipo==='banco' ? clienteAtivo : null, _chave: chave });
+  }
+  // Re-render a coluna que foi clicada
+  const f = tipo==='estrutura'
+    ? document.getElementById('busca-estrutura').value.toLowerCase()
+    : document.getElementById('busca-banco').value.toLowerCase();
+  renderColuna(tipo, lista, f);
   renderSelecionados();
 }
 
-document.getElementById('busca').addEventListener('input', function() {
-  const f = this.value.toLowerCase();
-  renderTopicos(f
-    ? todosTopicos.filter(t => t.nome.toLowerCase().includes(f) || t.categoria.toLowerCase().includes(f))
-    : todosTopicos);
-});
-
-// ── SELECIONADOS ─────────────────────────────────────────────────────────────
+// ── SELECIONADOS ──────────────────────────────────────────────────────────────
 
 function renderSelecionados() {
   const list = document.getElementById('sel-list');
   document.getElementById('btn-gerar').disabled = !selecionados.length;
   document.getElementById('badge-sel').innerHTML = selecionados.length
-    ? '<span class="badge">' + selecionados.length + '</span>' : '';
+    ? '<span class="badge">'+selecionados.length+'</span>' : '';
 
   if (!selecionados.length) {
-    list.innerHTML = '<div class="empty-msg">Nenhum tópico selecionado.<br>Clique nos tópicos ao lado.</div>';
+    list.innerHTML='<div class="empty-msg">Nenhum item selecionado.</div>';
     return;
   }
 
-  list.innerHTML = '';
+  list.innerHTML='';
+  const normais   = selecionados.filter(t => !t.ultima_pagina);
+  const ultimaPag = selecionados.filter(t => t.ultima_pagina);
 
-  // Separar normais e última página
-  const normais    = selecionados.filter(t => !t.ultima_pagina);
-  const ultimaPag  = selecionados.filter(t => t.ultima_pagina);
-
-  function criarItem(t, i, isDraggable) {
+  function criarItem(t, isDraggable) {
     const item = document.createElement('div');
-    item.className = 'sel-item' + (t.ultima_pagina ? ' ultima-pagina' : '');
+    item.className = 'sel-item'
+      + (t.ultima_pagina ? ' ultima-pagina' : '')
+      + (t._tipo==='estrutura' ? ' is-estrutura' : '');
     item.draggable = isDraggable;
 
     let tagHtml = '';
-    if (t.topico_principal) tagHtml = '<div class="sel-tipo-tag">↑ Tópico principal</div>';
-    if (t.ultima_pagina)    tagHtml = '<div class="sel-tipo-tag" style="color:var(--laranja)">↓ Última página</div>';
+    if (t._tipo==='estrutura') tagHtml='<div class="sel-tipo-tag" style="color:var(--azul)">Estrutura</div>';
+    else if (t._cliente)       tagHtml='<div class="sel-tipo-tag" style="color:var(--cinza-texto)">'+t._cliente+'</div>';
+    if (t.ultima_pagina)       tagHtml+='<div class="sel-tipo-tag" style="color:var(--laranja)">↓ Última página</div>';
 
     item.innerHTML =
-      '<div class="drag-handle">' + (isDraggable ? '⠿' : '—') + '</div>' +
-      '<div style="flex:1">' +
-        '<div class="sel-nome">' + t.nome + '</div>' +
-        '<div class="sel-cat">' + t.categoria + '</div>' +
-        tagHtml +
-      '</div>' +
+      '<div class="drag-handle">'+(isDraggable?'⠿':'—')+'</div>'+
+      '<div style="flex:1">'+
+        '<div class="sel-nome">'+t.nome+'</div>'+
+        '<div class="sel-cat">'+t.categoria+'</div>'+
+        tagHtml+
+      '</div>'+
       '<button class="rm-btn">×</button>';
 
-    // Remover
-    item.querySelector('.rm-btn').onclick = function(e) {
+    item.querySelector('.rm-btn').onclick = e => {
       e.stopPropagation();
-      const gi = selecionados.findIndex(x => x.id === t.id);
+      const gi = selecionados.findIndex(x => x._chave === t._chave);
       if (gi >= 0) selecionados.splice(gi, 1);
-      const filtro = document.getElementById('busca').value.toLowerCase();
-      renderTopicos(filtro
-        ? todosTopicos.filter(x => x.nome.toLowerCase().includes(filtro) || x.categoria.toLowerCase().includes(filtro))
-        : todosTopicos);
+      // Re-render ambas as colunas para desmarcar check
+      renderColuna('estrutura', estruturaTopicos, document.getElementById('busca-estrutura').value.toLowerCase());
+      renderColuna('banco', bancoTopicos[clienteAtivo]||[], document.getElementById('busca-banco').value.toLowerCase());
       renderSelecionados();
     };
 
-    // Drag-and-drop apenas para normais
     if (isDraggable) {
-      item.addEventListener('dragstart', function(e) {
+      item.addEventListener('dragstart', e => {
         dragSrc = selecionados.indexOf(t);
         item.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.effectAllowed='move';
       });
-      item.addEventListener('dragend', function() { item.classList.remove('dragging'); });
-      item.addEventListener('dragover', function(e) {
+      item.addEventListener('dragend', () => item.classList.remove('dragging'));
+      item.addEventListener('dragover', e => {
         e.preventDefault();
-        // Só aceita drop de outros normais
-        if (dragSrc !== null && !selecionados[dragSrc].ultima_pagina) {
-          item.classList.add('drag-over');
-        }
+        if (dragSrc!==null && !selecionados[dragSrc].ultima_pagina) item.classList.add('drag-over');
       });
-      item.addEventListener('dragleave', function() { item.classList.remove('drag-over'); });
-      item.addEventListener('drop', function(e) {
+      item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+      item.addEventListener('drop', e => {
         e.preventDefault(); item.classList.remove('drag-over');
         const destIdx = selecionados.indexOf(t);
-        if (dragSrc !== null && dragSrc !== destIdx && !selecionados[dragSrc].ultima_pagina) {
-          selecionados.splice(destIdx, 0, selecionados.splice(dragSrc, 1)[0]);
+        if (dragSrc!==null && dragSrc!==destIdx && !selecionados[dragSrc].ultima_pagina) {
+          selecionados.splice(destIdx, 0, selecionados.splice(dragSrc,1)[0]);
           renderSelecionados();
         }
       });
@@ -453,68 +483,64 @@ function renderSelecionados() {
     return item;
   }
 
-  normais.forEach(t => list.appendChild(criarItem(t, selecionados.indexOf(t), true)));
+  normais.forEach(t => list.appendChild(criarItem(t, true)));
 
-  // Separador visual para última página
   if (ultimaPag.length) {
     const sep = document.createElement('div');
-    sep.className = 'sep-ultima';
-    sep.textContent = '↓ Última página (fixo)';
+    sep.className='sep-ultima';
+    sep.textContent='↓ Última página (fixo)';
     list.appendChild(sep);
-    ultimaPag.forEach(t => list.appendChild(criarItem(t, selecionados.indexOf(t), false)));
+    ultimaPag.forEach(t => list.appendChild(criarItem(t, false)));
   }
 }
 
-// ── GERAR ────────────────────────────────────────────────────────────────────
+// ── GERAR ─────────────────────────────────────────────────────────────────────
 
 document.getElementById('btn-gerar').addEventListener('click', async function() {
   const dados = {
-    processo:    document.getElementById('processo').value,
-    vara:        document.getElementById('vara').value,
+    processo:     document.getElementById('processo').value,
+    vara:         document.getElementById('vara').value,
     participante: document.getElementById('participante').value,
-    demanda:     document.getElementById('demanda').value,
-    entrega:     document.getElementById('entrega').value
+    demanda:      document.getElementById('demanda').value,
+    entrega:      document.getElementById('entrega').value
   };
-  if (!dados.participante) { showToast('Informe o nome do Autor/Reclamante.', 'error'); return; }
+  if (!dados.participante) { showToast('Informe o nome do Autor/Reclamante.','error'); return; }
   document.getElementById('loading').classList.add('ativo');
   try {
-    const r = await fetch(API + '/api/gerar', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
+    const r = await fetch(API+'/api/gerar', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      credentials:'include',
       body: JSON.stringify({
         topicos: selecionados.map(t => ({
           nome:            t.nome,
           path:            t.path,
-          topico_principal: t.topico_principal || false,
-          ultima_pagina:   t.ultima_pagina || false
+          topico_principal: t.topico_principal||false,
+          ultima_pagina:   t.ultima_pagina||false
         })),
         dados
       })
     });
-    if (!r.ok) { const e = await r.json(); throw new Error(e.erro || 'Erro desconhecido'); }
+    if (!r.ok) { const e=await r.json(); throw new Error(e.erro||'Erro desconhecido'); }
     const blob = await r.blob();
     const a    = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    const proc = (dados.processo || 'sp').replace(/[\\/*?:"<>|]/g, '-').trim();
-    a.download = proc + '_Parecer Técnico.rev001.docx';
+    a.href     = URL.createObjectURL(blob);
+    const proc = (dados.processo||'sp').replace(/[\/*?:"<>|]/g,'-').trim();
+    a.download = proc+'_Parecer Técnico.rev001.docx';
     a.click();
-    showToast('Parecer gerado com sucesso!', 'success');
-  } catch(e) {
-    showToast('Erro: ' + e.message, 'error');
-  }
+    showToast('Parecer gerado com sucesso!','success');
+  } catch(e) { showToast('Erro: '+e.message,'error'); }
   document.getElementById('loading').classList.remove('ativo');
 });
 
-// ── TOAST ────────────────────────────────────────────────────────────────────
+// ── TOAST ─────────────────────────────────────────────────────────────────────
 
 function showToast(msg, type) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.className = type ? 'show ' + type : 'show';
-  clearTimeout(t._t); t._t = setTimeout(function() { t.className = ''; }, 4000);
+  t.textContent=msg; t.className=type?'show '+type:'show';
+  clearTimeout(t._t); t._t=setTimeout(()=>{ t.className=''; },4000);
 }
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────────────────────────────
 
 verificarSessao();
 </script>
