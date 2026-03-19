@@ -223,9 +223,9 @@ def listar_topicos():
         if cliente not in ("PREVI", "ELOS"):
             return jsonify({"erro": "Cliente inválido. Use PREVI ou ELOS."}), 400
 
-        pasta_raiz = get_pasta_banco()
-        # Ex: /Banco de Teses/PREVI/Banco de Teses PREVI
-        pasta_cliente = f"{pasta_raiz}/{cliente}/Banco de Teses {cliente}"
+        pasta_raiz    = get_pasta_banco()
+        # Estrutura real: /Banco de Teses/Banco de Teses PREVI/
+        pasta_cliente = f"{pasta_raiz}/Banco de Teses {cliente}"
 
         entradas = _listar_pasta_dropbox(dbx, pasta_cliente)
         topicos  = _extrair_topicos(entradas, pasta_cliente, ordem_prioridade=None)
